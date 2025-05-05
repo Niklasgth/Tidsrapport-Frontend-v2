@@ -1,0 +1,24 @@
+.button {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-block;  /* Viktigt för att se till att det beter sig som en knapp */
+  text-align: center;     /* För att länken ska vara centrerad i knappen */
+  transition: background-color 0.25s, border-color 0.25s;
+}
+
+.button:hover {
+  background-color: var(--color-primary);
+  border-color: var(--color-highlight);
+}
+
+.button:focus,
+.button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
