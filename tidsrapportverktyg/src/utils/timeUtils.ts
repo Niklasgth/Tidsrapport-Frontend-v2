@@ -1,7 +1,8 @@
 
-export const formatDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins} min ${secs} sek`;
-  };
-  
+export const formatDuration = (duration: number): string => {
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
+  return `${minutes} min ${seconds} sek`;
+};
+
+
