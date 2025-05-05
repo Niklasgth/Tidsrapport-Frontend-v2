@@ -1,0 +1,50 @@
+.container {
+    padding: 1rem;
+    max-width: 28rem;
+    margin: 0 auto;
+    border: 1px solid var(--color-primary);  /* Använd din primära färg */
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px var(--color-shadow); /* Använd din shadow-färg */
+  }
+  
+  .input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--color-accent);  /* Använd accent-färg */
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--color-background);  /* Bakgrundsfärg från loggan */
+  }
+  
+  .timer {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-highlight);  /* Klocka och hårfärg */
+  }
+  
+  .startButton {
+    background-color: var(--color-primary); /* Använd primärfärg för startknappen */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .startButton:hover {
+    background-color: var(--color-accent); /* Accentfärg på hover */
+  }
+  
+  .stopButton {
+    background-color: var(--color-highlight); /* Klocka-färgen på stop-knappen */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .stopButton:hover {
+    background-color: var(--color-primary); /* Primärfärg på hover */
+  }
+  
