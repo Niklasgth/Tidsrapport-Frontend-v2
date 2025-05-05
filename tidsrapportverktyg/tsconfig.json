@@ -12,16 +12,17 @@
       "@models/*": ["models/*"],
       "@routes/*": ["routes/*"],
       "@styles/*": ["styles/*"]
-     
     },
-    // dessa brukar också finnas
     "module": "ESNext",
     "target": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",  // Detta ska vara bra, eftersom bundler passar för Vite
     "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,             // Förhindrar att TypeScript genererar .js-filer
+    "skipLibCheck": true,       // För att undvika problem med vissa typer i bibliotek
+    "resolveJsonModule": true   // Om du använder JSON-moduler
   },
   "include": ["src"]
 }
