@@ -1,24 +1,36 @@
+/* Global button stil */
 .button {
   background-color: var(--color-accent);
   color: var(--color-background);
-  padding: 0.6em 1.2em;
-  border-radius: 8px;
+  padding: 0.75em 1.5em; /* Justera padding för en mer balanserad knapp */
+  border-radius: 0.5rem;  /* Mjukare hörn */
   border: 1px solid transparent;
-  font-size: 1em;
-  font-weight: 500;
+  font-size: 1.125rem;  /* Lite större text för bättre läsbarhet */
+  font-weight: 600;  /* Fettare text för mer kontrast */
   font-family: inherit;
   cursor: pointer;
-  display: inline-block;  /* Viktigt för att se till att det beter sig som en knapp */
-  text-align: center;     /* För att länken ska vara centrerad i knappen */
-  transition: background-color 0.25s, border-color 0.25s;
+  display: inline-block;
+  text-align: center;
+  transition: background-color 0.25s, border-color 0.25s, transform 0.2s ease;  /* Lägger till en liten transformationseffekt */
 }
 
 .button:hover {
-  background-color: var(--color-primary);
-  border-color: var(--color-highlight);
+  background-color: var(--color-primary);  /* En skarp kontrast på hover */
+  border-color: var(--color-highlight);  /* Accentfärg för fokus på hover */
+  transform: scale(1.05);  /* Liten förstorning på hover */
 }
 
 .button:focus,
 .button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 4px solid var(--color-highlight);  /* Skapa tydlig kontrast vid focus */
+}
+
+/* För de specifika knapparna som Starta/Stoppa i TimeTracker */
+.startButton, .stopButton {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.startButton:hover, .stopButton:hover {
+  background-color: var(--color-accent);  /* Hovereffekt för både start och stop-knappar */
 }

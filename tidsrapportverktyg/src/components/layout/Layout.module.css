@@ -4,18 +4,20 @@
   min-height: 100vh;  /* Gör så att layouten täcker hela höjden på sidan */
 }
 
+/* Layout.module.css */
 header, footer {
-  background-color: #282c34;
+  background-color: var(--color-primary);
   color: white;
-  padding: 1rem;
+  padding: 1.5rem; /* Ökar padding för en bättre visuell känsla */
   text-align: center;
-  z-index: 1;  /* Ser till att headern och footern ligger ovanpå allt annat */
+  font-size: 1.25rem; /* Större text för header och footer för att framhäva dem */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Mild skugga under headern och footern för att skapa djup */
 }
 
 main {
-  flex: 1;  /* Gör så att main tar upp den kvarvarande platsen */
-  display: flex;
-  flex-direction: column;
+  flex: 1;
   padding: 2rem;
-  background-color: #f9f9f9;
+  background-color: var(--color-background);
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* En mycket mild skugga för att ge lite djup */
 }

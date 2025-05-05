@@ -7,9 +7,17 @@ type InputProps = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  disabled?: boolean; 
 };
 
-const Input = ({ label, type = 'text', value, onChange, placeholder }: InputProps) => {
+const Input = ({
+  label,
+  type = 'text',
+  value,
+  onChange,
+  placeholder,
+  disabled = false, // Sätter standardvärde för disabled till false
+}: InputProps) => {
   return (
     <div className={styles.inputWrapper}>
       {label && <label className={styles.label}>{label}</label>}
@@ -19,6 +27,7 @@ const Input = ({ label, type = 'text', value, onChange, placeholder }: InputProp
         onChange={onChange}
         placeholder={placeholder}
         className={styles.input}
+        disabled={disabled} // Skickar vidare disabled till input-elementet
       />
     </div>
   );
