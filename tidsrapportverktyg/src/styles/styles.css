@@ -1,0 +1,22 @@
+:root {
+  /* === Egna färgvariabler från TRV-loggan === */
+  --color-primary: #4b2c12;        /* T.R.V texten */
+  --color-background: #e4dccb;     /* Bakgrunden i loggan */
+  --color-accent: #2c3e50;         /* Kugghjulet */
+  --color-highlight: #e1ab52;      /* Klocka och hår */
+  --color-shadow: #7a4b2b;         /* Hatt och rock */
+
+  /* === Övrigt från tidigare === */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: hsl(0, 0%, 14%);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

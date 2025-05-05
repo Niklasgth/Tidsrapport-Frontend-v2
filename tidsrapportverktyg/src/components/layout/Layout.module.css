@@ -1,0 +1,21 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;  /* Gör så att layouten täcker hela höjden på sidan */
+}
+
+header, footer {
+  background-color: #282c34;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  z-index: 1;  /* Ser till att headern och footern ligger ovanpå allt annat */
+}
+
+main {
+  flex: 1;  /* Gör så att main tar upp den kvarvarande platsen */
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  background-color: #f9f9f9;
+}
