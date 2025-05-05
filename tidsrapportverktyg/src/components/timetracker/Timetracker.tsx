@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { createTask } from '@services/taskService';
 import { formatDuration } from '@utils/timeUtils';
 import { useTimer } from '@hooks/useTimer';
+import Button from '@components/ui/button/Button';  
+import Input from '@components/ui/input/Input';    
 import styles from './TimeTracker.module.css';
-
 
 const TimeTracker: React.FC = () => {
   const [description, setDescription] = useState('');
@@ -36,12 +37,12 @@ const TimeTracker: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <input
-        className={styles.input}
-        type="text"
-        placeholder="Vad jobbar du med?"
+      {/* Använd Input-komponenten här */}
+      <Input
+        label="Vad jobbar du med?"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+        placeholder="Beskriv din uppgift"
         disabled={isTracking}
       />
 
@@ -49,14 +50,15 @@ const TimeTracker: React.FC = () => {
         Tid: {formatDuration(duration)}
       </div>
 
+      {/* Använd Button-komponenten för Starta/Stoppa */}
       {!isTracking ? (
-        <button onClick={handleStart} className={styles.startButton}>
+        <Button onClick={handleStart}>
           Starta
-        </button>
+        </Button>
       ) : (
-        <button onClick={handleStop} className={styles.stopButton}>
+        <Button onClick={handleStop}>
           Stoppa
-        </button>
+        </Button>
       )}
     </div>
   );

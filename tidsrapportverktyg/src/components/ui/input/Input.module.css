@@ -1,17 +1,33 @@
+/* Global input-wrapper */
 .inputWrapper {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
-  }
-  
-  .label {
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-  }
-  
-  .input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--color-accent); /* Använd accentfärg för etiketten */
+  font-size: 1rem;  /* Större text för etiketten för bättre läsbarhet */
+}
+
+.input {
+  padding: 1rem;
+  border: 1px solid var(--color-accent);  /* Använd accentfärg för kanterna */
+  border-radius: 0.375rem;  /* Lite rundare hörn för ett mjukare utseende */
+  background-color: var(--color-background);  /* Bakgrundsfärg som matchar designen */
+  font-size: 1rem;
+  color: var(--color-shadow);  /* Använd en kontrasterande färg för texten */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;  /* För smidigare övergångseffekter */
+}
+
+.input:focus {
+  border-color: var(--color-highlight);  /* Skapar en tydlig indikation på fokus */
+  box-shadow: 0 0 5px var(--color-highlight);  /* Mild skugga för att markera det fokuserade inputfältet */
+}
+
+.input:disabled {
+  background-color: #f0f0f0;  /* Färg för inaktiverade fält */
+  cursor: not-allowed;
+}
