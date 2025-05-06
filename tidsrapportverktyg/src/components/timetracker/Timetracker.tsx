@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { createTask } from '@services/taskService';
+import React, { useState, useEffect } from 'react';
+import { createTask, getTasks } from '@services/taskService';
 import { formatDuration } from '@utils/timeUtils';
 import { useTimer } from '@hooks/useTimer';
 import { TimeEntry } from '@models/TimeEntry';
 import { TaskList } from '@models/TaskList';  
 import styles from './TimeTracker.module.css';
+import TaskCard from "@components/taskCard/TaskCard";
 
 const TimeTracker: React.FC = () => {
   const [description, setDescription] = useState('');
   const [isTracking, setIsTracking] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
-  const [taskList, setTaskList] = useState<TaskList>({  // Nu använder vi TaskList här
+  const [taskList, setTaskList] = useState<TaskList>({  
     tasks: [],
     addTask: (task: TimeEntry) => {
       setTaskList((prevState) => ({ 
@@ -35,6 +36,22 @@ const TimeTracker: React.FC = () => {
 
   const { duration, reset } = useTimer(isTracking, startTime);
 
+  // 🆕 Hämta tasks från backend vid sidladdning
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const tasksFromBackend = await getTasks();
+        setTaskList(prevState => ({
+          ...prevState,
+          tasks: tasksFromBackend,
+        }));
+      } catch (error) {
+        console.error('Fel vid hämtning av tasks:', error);
+      }
+    };
+    fetchTasks();
+  }, []);
+
   const handleStart = () => {
     setStartTime(new Date());
     setIsTracking(true);
@@ -46,7 +63,6 @@ const TimeTracker: React.FC = () => {
     setIsTracking(false);
     const endTime = new Date();
 
-    // Skapa en ny uppgift
     const newEntry: TimeEntry = {
       id: crypto.randomUUID(),
       description,
@@ -55,18 +71,15 @@ const TimeTracker: React.FC = () => {
       duration,
     };
 
-    // Lägg till den nya uppgiften i vår TaskList
     taskList.addTask(newEntry);
 
     try {
-      // Anropa backend för att spara uppgiften
       const savedTask = await createTask(description, startTime, endTime);
       console.log('Task sparad:', savedTask);
     } catch (error) {
       console.error('Fel vid sparande:', error);
     }
 
-    // Reset
     setDescription('');
     setStartTime(null);
     reset();
@@ -83,11 +96,9 @@ const TimeTracker: React.FC = () => {
           onChange={(e) => setDescription(e.target.value)}
           disabled={isTracking}
         />
-
         <div className={styles.timer}>
           Tid: {formatDuration(duration)}
         </div>
-
         {!isTracking ? (
           <button onClick={handleStart} className={styles.startButton}>
             Starta
@@ -99,17 +110,13 @@ const TimeTracker: React.FC = () => {
         )}
       </div>
 
-      {/* Visa sparade uppgifter här */}
       <div className={styles.savedTasks}>
         <h3>Tidrapporterade Uppgifter</h3>
-        <ul>
-          {taskList.tasks.map((entry) => (  // Nu använder vi taskList för att rendera uppgifterna
-            <li key={entry.id}>
-              <strong>{entry.description}</strong> <br />
-              Tid: {formatDuration(entry.duration)}
-            </li>
+        <div className={styles.taskCards}>
+          {taskList.tasks.map((entry) => (
+            <TaskCard key={entry.id} task={entry} />
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
