@@ -1,17 +1,7 @@
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;  /* Gör så att layouten täcker hela höjden på sidan */
-}
-
-/* Layout.module.css */
-header, footer {
-  background-color: var(--color-primary);
-  color: white;
-  padding: 1.5rem; /* Ökar padding för en bättre visuell känsla */
-  text-align: center;
-  font-size: 1.25rem; /* Större text för header och footer för att framhäva dem */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Mild skugga under headern och footern för att skapa djup */
+  min-height: 100vh;
 }
 
 main {
@@ -19,5 +9,5 @@ main {
   padding: 2rem;
   background-color: var(--color-background);
   border-radius: 1rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* En mycket mild skugga för att ge lite djup */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
