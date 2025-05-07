@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createTask, getTasks } from '@services/taskService';
+import { getTaskCategories } from '@services/taskCategoryService'; 
 import { formatDuration } from '@utils/timeUtils';
 import { useTimer } from '@hooks/useTimer';
 import { TimeEntry } from '@models/TimeEntry';
@@ -8,7 +9,8 @@ import styles from './TimeTracker.module.css';
 import TaskCard from "@components/taskCard/TaskCard";
 
 const TimeTracker: React.FC = () => {
-  const [description, setDescription] = useState('');
+  const [categoryId, setCategoryId] = useState<string>('');  
+  const [categoryList, setCategoryList] = useState<{ id: string, name: string }[]>([]);  // Lägger till kategori-lista
   const [isTracking, setIsTracking] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [taskList, setTaskList] = useState<TaskList>({  
@@ -36,20 +38,24 @@ const TimeTracker: React.FC = () => {
 
   const { duration, reset } = useTimer(isTracking, startTime);
 
-  // 🆕 Hämta tasks från backend vid sidladdning
+  // Hämta tasks och kategorier från backend vid sidladdning
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchData = async () => {
       try {
         const tasksFromBackend = await getTasks();
         setTaskList(prevState => ({
           ...prevState,
           tasks: tasksFromBackend,
         }));
+
+        const categories = await getTaskCategories();  // Hämta kategorier
+        setCategoryList(categories);  // Sätt kategorier i state
       } catch (error) {
-        console.error('Fel vid hämtning av tasks:', error);
+        console.error('Fel vid hämtning av data:', error);
       }
     };
-    fetchTasks();
+
+    fetchData();
   }, []);
 
   const handleStart = () => {
@@ -58,14 +64,14 @@ const TimeTracker: React.FC = () => {
   };
 
   const handleStop = async () => {
-    if (!startTime) return;
+    if (!startTime || !categoryId) return;  // Kontrollera att categoryId finns
 
     setIsTracking(false);
     const endTime = new Date();
 
     const newEntry: TimeEntry = {
       id: crypto.randomUUID(),
-      description,
+      categoryId,  // Använd categoryId här
       startTime,
       endTime,
       duration,
@@ -74,13 +80,13 @@ const TimeTracker: React.FC = () => {
     taskList.addTask(newEntry);
 
     try {
-      const savedTask = await createTask(description, startTime, endTime);
+      const savedTask = await createTask(categoryId, startTime, endTime);  // Skicka categoryId istället för description
       console.log('Task sparad:', savedTask);
     } catch (error) {
       console.error('Fel vid sparande:', error);
     }
 
-    setDescription('');
+    setCategoryId('');  // Återställ categoryId
     setStartTime(null);
     reset();
   };
@@ -88,17 +94,26 @@ const TimeTracker: React.FC = () => {
   return (
     <div className="flex">
       <div className={styles.container}>
-        <input
+        {/* Välj kategori istället för att skriva beskrivning */}
+        <select
           className={styles.input}
-          type="text"
-          placeholder="Vad jobbar du med?"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
           disabled={isTracking}
-        />
+        >
+          <option value="">Välj kategori</option>
+          {/* Fyll på kategorier dynamiskt från backend */}
+          {categoryList.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+
         <div className={styles.timer}>
           Tid: {formatDuration(duration)}
         </div>
+
         {!isTracking ? (
           <button onClick={handleStart} className={styles.startButton}>
             Starta
