@@ -34,7 +34,8 @@
       "@hooks/*": ["hooks/*"],
       "@models/*": ["models/*"],
       "@appbase/*": ["appbase/*"],
-      "@routes/*": ["routes/*"]
+      "@routes/*": ["routes/*"],
+      
     }
   },
   "include": ["src"]

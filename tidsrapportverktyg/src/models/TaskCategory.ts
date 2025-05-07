@@ -1,4 +1,7 @@
+
 export interface TaskCategory {
-    name: string;
-  }
-  
+  _id: string;
+  name: string;
+  createdAt: string;
+  _class: string;
+}

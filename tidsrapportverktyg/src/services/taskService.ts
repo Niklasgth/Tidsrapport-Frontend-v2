@@ -34,22 +34,33 @@ export const createTask = async (categoryId: string, startTime: Date, endTime: D
 // Funktion för att hämta alla tasks
 export const getTasks = async (): Promise<TimeEntry[]> => {
   try {
-    const response = await fetch(`${API_URL}/api/tasks`);
-    if (!response.ok) {
-      throw new Error('Misslyckades att hämta tasks');
-    }
+    // Hämta både tasks och kategorier parallellt
+    const [tasksRes, catsRes] = await Promise.all([
+      fetch(`${API_URL}/api/tasks`),
+      fetch(`${API_URL}/api/task-categories`)
+    ]);
 
-    const data = await response.json();
+    if (!tasksRes.ok) throw new Error('Misslyckades att hämta tasks');
+    if (!catsRes.ok)  throw new Error('Misslyckades att hämta kategorier');
 
-    // 🛠️ Konvertera ISO-strängar till Date-objekt
-    return data.map((entry: any) => ({
+    const [rawTasks, rawCats] = await Promise.all([
+      tasksRes.json(),
+      catsRes.json()
+    ]);
+
+    // Bygg en lookup-tabell för kategorinamn
+    const catMap: Record<string,string> = {};
+    (rawCats as any[]).forEach(c => { catMap[c._id] = c.name; });
+
+    // Enricha varje task med categoryName och formatera tider
+    return (rawTasks as any[]).map(entry => ({
       ...entry,
+      categoryName: catMap[entry.categoryId],
       startTime: entry.startTime ? new Date(entry.startTime) : null,
-      endTime: entry.endTime ? new Date(entry.endTime) : null,
+      endTime:   entry.endTime   ? new Date(entry.endTime)   : null,
     }));
   } catch (error: any) {
     console.error('Fel vid hämtning av tasks:', error);
     throw new Error('Fel vid hämtning av tasks: ' + error.message);
   }
 };
-

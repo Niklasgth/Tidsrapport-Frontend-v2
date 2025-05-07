@@ -1,18 +1,13 @@
-// statUtils.ts
+// src/utils/statUtils.ts
 import { TimeEntry } from '@models/TimeEntry';
 
-export const calculateTimeByCategory = (timeEntries: TimeEntry[]): { [categoryId: string]: number } => {
-  return timeEntries.reduce((acc, entry) => {
-    const categoryId = entry.categoryId;
-    const duration = entry.duration;
+export function calculateTimeByCategory(timeEntries: TimeEntry[]): Record<string, number> {
+  const result: Record<string, number> = {};
 
-    // Lägg till tiden för varje kategori
-    if (acc[categoryId]) {
-      acc[categoryId] += duration;
-    } else {
-      acc[categoryId] = duration;
-    }
+  timeEntries.forEach(entry => {
+    const name = entry.categoryName ?? 'Okänd kategori';
+    result[name] = (result[name] || 0) + entry.duration;
+  });
 
-    return acc;
-  }, {} as { [categoryId: string]: number });
-};
+  return result;
+}
