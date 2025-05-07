@@ -16,7 +16,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   return (
     <div className={styles.card}>
-      <h3>{task.description}</h3>
+      <h3>{task.categoryName ?? 'Okänd kategori'}</h3>
+
+
 
       {/* Flexbox wrapper för starttid, sluttid och datum */}
       <div className={styles['time-info']}>
