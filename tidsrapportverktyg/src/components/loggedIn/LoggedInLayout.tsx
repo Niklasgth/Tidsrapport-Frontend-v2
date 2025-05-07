@@ -1,14 +1,27 @@
+// LoggedInLayout.tsx
 import React from 'react';
-import styles from "./LoggedInLayout.module.css";
-import TimeTracker from '@components/timetracker/Timetracker';
-import StatHolder from "@components/statistic/statHolder/StatHolder"
+import TimeTracker from '../timetracker/TimeTracker';
+import TaskList from '../taskList/TaskList';
+import StatBar from '../statistic/stats/StatBar';
+import { useTasks } from '@hooks/useTask';
+import styles from './LoggedInLayout.module.css';
 
-const LoggedInLayout: React.FC = () => {
+const LoggedInLayout = () => {
+  const { tasks, categories, createAndAddTask } = useTasks();
+
+  // Skapa mapping av categoryId till categoryName för StatBar
+  const categoryMap = categories.reduce(
+    (acc, category) => ({ ...acc, [category.id]: category.name }),
+    {}
+  );
+
   return (
-    <div className={styles.LoggedInLayout}>
-      <h1>Du är inloggad!</h1>
-      <TimeTracker />
-      <StatHolder />
+    <div className={styles.loggedInLayout}>
+      <section className={styles.content}>
+        <TimeTracker onStop={createAndAddTask} />
+        <TaskList tasks={tasks} />
+        <StatBar timeEntries={tasks} categories={categoryMap} />
+      </section>
     </div>
   );
 };

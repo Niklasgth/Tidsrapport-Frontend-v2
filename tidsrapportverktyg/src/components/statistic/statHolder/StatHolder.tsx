@@ -17,7 +17,7 @@ const StatHolder: React.FC = () => {
       // Hämta alla kategorier
       const taskCategories = await getTaskCategories();
       const categoryMap = taskCategories.reduce((acc, category) => {
-        acc[category.id] = category.name;
+        acc[category._id] = category.name;
         return acc;
       }, {} as { [key: string]: string });
 
