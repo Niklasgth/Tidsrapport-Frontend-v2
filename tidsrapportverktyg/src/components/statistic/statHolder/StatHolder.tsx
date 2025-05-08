@@ -1,37 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { getTasks } from '@services/taskService'; // Funktion för att hämta alla tidsinlägg
-import { getTaskCategories } from '@services/taskCategoryService'; // Funktion för att hämta alla kategorier
-import StatBar from '@components/statistic/stats/StatBar'; // Komponent för att visa statistik
+import React, { useState } from 'react';
+
+// Komponenter
+import StatBar from '@components/statistic/stats/StatBar';
+import WeeklyStats from '@components/statistic/weeklyStats/WeeklyStats';
+import WeekHeader from '@components/statistic/weekHeader/WeekHeader';
+import styles from './StatHolder.module.css';
+
+// Modeller
 import { TimeEntry } from '@models/TimeEntry';
 
+// Data-hooks & util
+import { useCategories } from '@hooks/useCategories';
+import { useTasks } from '@hooks/useTask';
+import { buildCategoryMap } from '@utils/categoryUtils';
+
 const StatHolder: React.FC = () => {
-  const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
-  const [categories, setCategories] = useState<{ [key: string]: string }>({}); // Mapping mellan kategoriId och kategoriNamn
+  const [referenceDate, setReferenceDate] = useState<Date>(new Date());
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Hämta alla tidsinlägg
-      const entries = await getTasks();
-      setTimeEntries(entries);
+  const { categories } = useCategories();
+  const { tasks } = useTasks();
 
-      // Hämta alla kategorier
-      const taskCategories = await getTaskCategories();
-      const categoryMap = taskCategories.reduce((acc, category) => {
-        acc[category._id] = category.name;
-        return acc;
-      }, {} as { [key: string]: string });
+  const categoryMap = buildCategoryMap(categories);
 
-      setCategories(categoryMap);
-    };
+  const timeEntries: TimeEntry[] = tasks.map(entry => ({
+    ...entry,
+    categoryName: categoryMap[entry.categoryId] ?? 'Okänd kategori',
+  }));
 
-    fetchData();
-  }, []);
+  const goToPreviousWeek = () => {
+    const newDate = new Date(referenceDate);
+    newDate.setDate(newDate.getDate() - 7);
+    setReferenceDate(newDate);
+  };
+
+  const goToNextWeek = () => {
+    const newDate = new Date(referenceDate);
+    newDate.setDate(newDate.getDate() + 7);
+    setReferenceDate(newDate);
+  };
 
   return (
-    <div>
-      <h2>Statistik</h2>
-      {/* Skicka både timeEntries och categories till StatBar */}
-      <StatBar timeEntries={timeEntries} categories={categories} />
+    <div className={styles.statHolder}>
+      <h2 className={styles.title}>Statistik</h2>
+
+      <WeekHeader date={referenceDate} />
+
+      <div className={styles.weekNav}>
+        <button onClick={goToPreviousWeek}>⬅ Föregående vecka</button>
+        <button onClick={goToNextWeek}>Nästa vecka ➡</button>
+      </div>
+
+      <StatBar
+        timeEntries={timeEntries}
+        categories={categoryMap}
+        referenceDate={referenceDate}
+      />
+
+      <WeeklyStats
+        entries={timeEntries}
+        referenceDate={referenceDate}
+      />
     </div>
   );
 };

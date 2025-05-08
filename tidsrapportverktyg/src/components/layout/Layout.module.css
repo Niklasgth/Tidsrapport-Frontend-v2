@@ -4,10 +4,12 @@
   min-height: 100vh;
 }
 
-main {
+.main {
   flex: 1;
   padding: 2rem;
   background-color: var(--color-background);
   border-radius: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+  margin: 0 auto;
 }

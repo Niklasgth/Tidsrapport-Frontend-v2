@@ -49,7 +49,7 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onStop }) => {
 
   return (
     <div className="flex">
-      <div className={styles.container}>
+      <div className={styles.timeTrackerContainer}>
         <select
           className={styles.input}
           value={categoryId}
