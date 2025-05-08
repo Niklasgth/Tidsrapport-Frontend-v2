@@ -1,15 +1,16 @@
-/* LoggedInLayout.module.css */
-.LoggedInLayout {
-    background-color: var(--color-background);
-    padding: 2rem;  /* Lägger till padding för att ge mer luft runt innehållet */
-    border-radius: 1rem; /* Gör kanterna rundade för ett mjukare utseende */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lägg till en mild skugga för att skapa djup */
-  }
-  
-  h1 {
-    font-size: 2rem;
-    color: var(--color-accent);
-    text-align: center;
-    margin-bottom: 1.5rem; /* Mellanslag under rubriken för att skapa ett luftigare utseende */
-  }
-  
+.taskBox {
+  background-color: var(--color-background);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.statBox {
+  background-color: var(--color-background);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+
+}

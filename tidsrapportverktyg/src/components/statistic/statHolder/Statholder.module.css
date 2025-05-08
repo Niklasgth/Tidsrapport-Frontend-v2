@@ -1,0 +1,32 @@
+.statHolder {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .title {
+    text-align: center;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+  
+  .weekNav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .weekNav button {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .weekNav button:hover {
+    background-color: var(--color-highlight);
+  }
+  

@@ -2,6 +2,7 @@
 import React from 'react';
 import TaskCard from '@components/taskCard/TaskCard';
 import { TimeEntry } from '@models/TimeEntry';
+import styles from './TaskList.module.css';
 
 interface TaskListProps {
   tasks: TimeEntry[];
@@ -9,10 +10,12 @@ interface TaskListProps {
 
 const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   return (
-    <div>
+
+    
+    <div className={styles.taskList}>
       {tasks.map(task => (
         <TaskCard 
-          key={task.id}   // <-- använd id här
+          key={task.id}   
           task={task} 
         />
       ))}
