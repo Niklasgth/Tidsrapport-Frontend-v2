@@ -1,3 +1,5 @@
+/* Scoped styles for EditebleTaskCard component */
+
 /* Global button stil */
 .button {
   background-color: var(--color-accent);
@@ -26,11 +28,60 @@
 }
 
 /* För de specifika knapparna som Starta/Stoppa i TimeTracker */
-.startButton, .stopButton {
+.startButton,
+.stopButton {
   background-color: var(--color-primary);
   color: white;
 }
 
-.startButton:hover, .stopButton:hover {
+.startButton:hover,
+.stopButton:hover {
   background-color: var(--color-accent);  /* Hovereffekt för både start och stop-knappar */
+}
+
+/* Ny variant för små knappar, t.ex. i EditebleTaskCard */
+.small {
+  padding: 0.25em 0.5em;      /* Mindre padding */
+  font-size: 0.75rem;         /* Mindre text */
+  border-radius: 0.25rem;    /* Mindre hörnradie */
+}
+
+.card {
+  /* CSS custom properties for button styling within this card only */
+  --etk-button-padding: 0.25rem 0.5rem;
+  --etk-button-font-size: 0.875rem;
+  --etk-button-radius: 0.25rem;
+}
+
+/* Edit mode form container */
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* View mode layout */
+.viewMode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Button group styling */
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.buttons button {
+  padding: var(--etk-button-padding);
+  font-size: var(--etk-button-font-size);
+  border-radius: var(--etk-button-radius);
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.buttons button:hover {
+  background-color: #f0f0f0;
 }
