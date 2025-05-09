@@ -1,80 +1,117 @@
-import { useState, useEffect } from 'react';
-import { getTasks as fetchTasks, createTask as apiCreateTask, updateTask as apiUpdateTask } from '@services/taskService';
+// src/hooks/useTasks.ts
+import { useState, useEffect, useCallback } from 'react';
+import {
+  getTasks as fetchTasks,
+  createTask as apiCreateTask,
+  updateTask as apiUpdateTask,
+  deleteTask as apiDeleteTask,
+} from '@services/taskService';
 import { TimeEntry } from '@models/TimeEntry';
-import { useCategories, Category } from './useCategories';
+import { useCategories } from './useCategories';
+import { Category } from '@models/Category';
 
 export interface UseTasksResult {
   tasks: TimeEntry[];
   categories: Category[];
   isLoading: boolean;
   error: Error | null;
-  createAndAddTask: (categoryId: string, startTime: Date, endTime: Date) => Promise<void>;
+  createAndAddTask: (
+    categoryId: string,
+    startTime: Date,
+    endTime: Date
+  ) => Promise<void>;
   updateTask: (id: string, updatedFields: Partial<TimeEntry>) => Promise<void>;
-  removeTask: (id: string) => void;
+  removeTask: (id: string) => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 export function useTasks(): UseTasksResult {
-  const { categories, isLoading: catLoading, error: catError } = useCategories();
+  const {
+    categories,
+    isLoading: catLoading,
+    error: catError,
+  } = useCategories();
   const [tasks, setTasks] = useState<TimeEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Hämta initialt
+  // Helper för att läsa in + enrich:a med categoryName
+  const load = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const fetched = await fetchTasks(); // varje t kan redan ha t.categoryName
+      const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
+      const enriched = fetched.map(t => ({
+        ...t,
+        // 1) använd backendens categoryName om det finns
+        // 2) annars slå upp i catMap
+        // 3) som sista fallback, "Okänd kategori"
+        categoryName:
+          t.categoryName ??
+          catMap[t.categoryId] ??
+          'Okänd kategori',
+      }));
+      setTasks(enriched);
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [categories]);
+
+  // Kör load när kategorierna är inlästa
   useEffect(() => {
-    if (catLoading) return;
-    if (catError) {
+    if (!catLoading && !catError) {
+      load();
+    } else if (catError) {
       setError(catError);
       setIsLoading(false);
-      return;
     }
-    (async () => {
-      try {
-        const fetchedTasks = await fetchTasks();
-        const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
-        const enriched = fetchedTasks.map(t => ({
-          ...t,
-          categoryName: catMap[t.categoryId] ?? 'Okänd kategori',
-        }));
-        setTasks(enriched);
-      } catch (err: any) {
-        setError(err);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [categories, catLoading, catError]);
+  }, [catLoading, catError, load]);
 
-  // Skapa
-  const createAndAddTask = async (categoryId: string, startTime: Date, endTime: Date) => {
+  // Skapa + patcha state
+  const createAndAddTask = async (
+    categoryId: string,
+    startTime: Date,
+    endTime: Date
+  ) => {
     try {
-      const created = await apiCreateTask(categoryId, startTime, endTime);
-      const categoryName = categories.find(c => c.id === categoryId)?.name ?? 'Okänd';
-      setTasks(prev => [...prev, { ...created, categoryName }]);
+      const created = await apiCreateTask(
+        categoryId,
+        startTime.toISOString(),
+        endTime.toISOString()
+      );
+      // created har redan categoryName från service
+      setTasks(prev => [...prev, created]);
     } catch (err: any) {
       setError(err);
     }
   };
 
-  // Uppdatera
-  const updateTask = async (id: string, updatedFields: Partial<TimeEntry>) => {
+  // Uppdatera + patcha state
+  const updateTask = async (
+    id: string,
+    updatedFields: Partial<TimeEntry>
+  ) => {
     try {
-      const updated = await apiUpdateTask(id, updatedFields);
-      const catName = categories.find(c => c.id === updated.categoryId)?.name ?? 'Okänd';
+      await apiUpdateTask(id, updatedFields);
       setTasks(prev =>
-        prev.map(t =>
-          t.id === id ? { ...updated, categoryName: catName } : t
-        )
+        prev.map(t => (t.id === id ? { ...t, ...updatedFields } : t))
       );
     } catch (err: any) {
       setError(err);
-      console.error('Fel vid uppdatering:', err);
     }
   };
 
-  // Ta bort
-  const removeTask = (id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
-    // ev. kalla deleteService om du har en sådan
+  // Ta bort både backend + state
+  const removeTask = async (id: string) => {
+    try {
+      await apiDeleteTask(id);
+      setTasks(prev => prev.filter(t => t.id !== id));
+    } catch (err: any) {
+      setError(err);
+    }
   };
 
   return {
@@ -85,5 +122,6 @@ export function useTasks(): UseTasksResult {
     createAndAddTask,
     updateTask,
     removeTask,
+    refresh: load,
   };
 }

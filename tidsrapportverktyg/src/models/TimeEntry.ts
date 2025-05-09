@@ -1,8 +1,8 @@
-export type TimeEntry = {
-  id: string;
+export interface TimeEntry {
+  id: string;           
   categoryId: string;
-  categoryName?: string; // görsåhär för att den variablen som kommer från backend ändå ska visas i UI.  
-  startTime: Date | null;
-  endTime: Date | null;
+  categoryName: string;
+  startTime?: string;
+  endTime?: string;
   duration: number;
-};
+}

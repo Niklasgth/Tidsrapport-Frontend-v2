@@ -28,6 +28,7 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onStop }) => {
     if (!startTime || !categoryId) return;
 
     const endTime = new Date();
+    console.log(categoryId) //felsökning
     onStop(categoryId, startTime, endTime);
     setIsTracking(false);
     setCategoryId('');

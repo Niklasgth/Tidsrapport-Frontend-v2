@@ -2,6 +2,7 @@ import React from 'react';
 import { calculateWeeklyTimeByCategory } from '@utils/statUtils';
 import { TimeEntry } from '@models/TimeEntry';
 import styles from './StatBar.module.css';
+import { formatDuration } from '@utils/timeUtils';
 
 interface StatBarProps {
   timeEntries: TimeEntry[];
@@ -14,33 +15,30 @@ const StatBar: React.FC<StatBarProps> = ({
   categories,
   referenceDate = new Date(),
 }) => {
+  // categoryTimes: { [categoryName]: seconds }
   const categoryTimes = calculateWeeklyTimeByCategory(timeEntries, referenceDate);
 
-  const timesInMinutes = Object.entries(categoryTimes).map(
-    ([category, seconds]) => [category, seconds / 60] as [string, number]
-  );
+  // Hitta högsta värde i sekunder för att skala staplarna
+  const maxSeconds = Math.max(...Object.values(categoryTimes), 1);
 
-  const maxMinutes = Math.max(...timesInMinutes.map(([, min]) => min), 1);
-
+  // Totalt för veckan i sekunder
   const totalSeconds = Object.values(categoryTimes).reduce((sum, sec) => sum + sec, 0);
-  const totalMinutes = Math.floor(totalSeconds / 60);
-  const remainingSeconds = totalSeconds % 60;
 
   return (
     <div className={styles.statBar}>
       <h2 className={styles.title}>Veckosummering per kategori</h2>
 
       <div className={styles.barContainer}>
-        {timesInMinutes.map(([categoryName, minutes]) => (
+        {Object.entries(categoryTimes).map(([categoryName, seconds]) => (
           <div key={categoryName} className={styles.bar}>
             <h3 className={styles.label}>{categoryName}</h3>
             <div className={styles.progress}>
               <div
                 className={styles.fill}
-                style={{ width: `${(minutes / maxMinutes) * 100}%` }}
+                style={{ width: `${(seconds / maxSeconds) * 100}%` }}
               >
                 <span className={styles.value}>
-                  {Math.round(categoryTimes[categoryName])} sek
+                  {formatDuration(seconds)}
                 </span>
               </div>
             </div>
@@ -48,11 +46,11 @@ const StatBar: React.FC<StatBarProps> = ({
         ))}
       </div>
 
-      {timesInMinutes.length === 0 ? (
+      {Object.keys(categoryTimes).length === 0 ? (
         <p className={styles.empty}>Ingen registrerad tid denna vecka.</p>
       ) : (
         <p className={styles.total}>
-          Totalt: {totalMinutes} min {remainingSeconds} sek
+          Totalt: {formatDuration(totalSeconds)}
         </p>
       )}
     </div>

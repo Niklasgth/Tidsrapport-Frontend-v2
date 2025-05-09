@@ -1,7 +1,6 @@
 import React from 'react';
 import EditebleTaskCard from '@components/taskCard/editebleTaskCard/EditebleTaskCard';
 import { useTasks } from '@hooks/useTasks';
-import { Category } from '@hooks/useCategories';
 import { TimeEntry } from '@models/TimeEntry';
 import styles from './EditibleTaskList.module.css';
 
