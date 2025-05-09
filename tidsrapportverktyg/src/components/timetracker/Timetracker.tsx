@@ -24,12 +24,14 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onStop }) => {
     setIsTracking(true);
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     if (!startTime || !categoryId) return;
-
     const endTime = new Date();
-    console.log(categoryId) //felsökning
-    onStop(categoryId, startTime, endTime);
+  
+    // 1. Vänta på att parent-komponenten skapar posten + refresh
+    await onStop(categoryId, startTime, endTime);
+  
+    // 2. När listan har laddats om, nolla timern
     setIsTracking(false);
     setCategoryId('');
     setStartTime(null);
