@@ -1,6 +1,6 @@
 // src/components/taskList/TaskList.tsx
 import React from 'react';
-import TaskCard from '@components/taskCard/TaskCard';
+import TaskCard from '@components/taskCard/taskCard/TaskCard';
 import { TimeEntry } from '@models/TimeEntry';
 import styles from './TaskList.module.css';
 
