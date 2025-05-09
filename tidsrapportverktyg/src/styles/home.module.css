@@ -1,0 +1,47 @@
+
+
+.container {
+    /* Ta upp hela viewport-höjden */
+    min-height: 100vh;
+  
+    /* Centrera innehållet */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+    /* Projektets bakgrund och textfärger */
+    background-color: var(--color-background);
+    color: var(--color-primary);
+  
+    /* Lite padding runt om */
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 3rem;             /* Stor välkomst-text */
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.25rem;          /* Mindre underrubrik */
+    color: var(--color-accent);  /* Accent-färg för kontrast */
+    margin-bottom: 2rem;
+  }
+  
+  .ctaButton {
+    background-color: var(--color-highlight);
+    color: var(--color-primary);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+  
+  .ctaButton:hover {
+    background-color: var(--color-shadow);
+    transform: scale(1.05);
+  }
