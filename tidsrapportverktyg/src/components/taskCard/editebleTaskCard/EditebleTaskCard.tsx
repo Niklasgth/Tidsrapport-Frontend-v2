@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import styles from './EditebleTaskCard.module.css';
 import { TimeEntry } from '@models/TimeEntry';
 import { Category } from '@hooks/useCategories';
+import buttonStyles from '@components/ui/button/Button.module.css';
 
 interface EditebleTaskCardProps {
   task: TimeEntry;
@@ -64,8 +65,13 @@ const EditebleTaskCard: React.FC<EditebleTaskCardProps> = ({ task, categories, o
           <p><strong>Slut:</strong> {formatTime(task.endTime)}</p>
           <p><strong>Datum:</strong> {formatDate(task.startTime)}</p>
           <div className={styles.buttons}>
-            <button onClick={() => setIsEditing(true)}>Redigera</button>
-          </div>
+  <button
+    className={`${buttonStyles.button} ${buttonStyles.small}`}
+    onClick={() => setIsEditing(true)}
+  >
+    Redigera
+  </button>
+</div>
         </div>
       )}
     </div>

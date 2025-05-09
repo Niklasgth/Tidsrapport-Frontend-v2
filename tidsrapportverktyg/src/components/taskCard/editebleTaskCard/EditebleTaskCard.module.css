@@ -46,3 +46,9 @@
   font-size: 0.75rem;
   color: #ecf0f1;  /* Ljusa texten för varaktighet */
 }
+
+.buttons {
+  display: flex;              /* gör containern till flexbox */
+  justify-content: center;    /* centrerar horisontellt */
+  align-items: center;        /* centrerar vertikalt (om du vill) */
+}
