@@ -1,53 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
+import { startOfWeek } from 'date-fns';
 
-// Komponenter
-import StatBar from '@components/statistic/stats/StatBar';
-import WeeklyStats from '@components/statistic/weeklyStats/WeeklyStats';
-import WeekHeader from '@components/statistic/weekHeader/WeekHeader';
-import styles from './StatHolder.module.css';
+// Components
+import StatBar      from '@components/statistic/stats/StatBar';
+import WeeklyStats  from '@components/statistic/weeklyStats/WeeklyStats';
+import WeekHeader   from '@components/statistic/weekHeader/WeekHeader';
+import styles       from './StatHolder.module.css';
 
-// Modeller
-import { TimeEntry } from '@models/TimeEntry';
+// Models & hooks & utils
+import { TimeEntry }        from '@models/TimeEntry';
+import { Category }         from '@models/Category';
+import { useCategories }    from '@hooks/useCategories';
+import { calculateWeeklyTimeByCategory } from '@utils/statUtils';
 
-// Data-hooks & util
-import { useCategories } from '@hooks/useCategories';
-import { useTasks } from '@hooks/useTasks';
-import { buildCategoryMap } from '@utils/categoryUtils';
+interface StatHolderProps {
+  timeEntries: TimeEntry[];
+}
 
-const StatHolder: React.FC = () => {
-  const [referenceDate, setReferenceDate] = useState<Date>(new Date());
+const StatHolder: React.FC<StatHolderProps> = ({ timeEntries }) => {
+  // 1: Reference week
+  const [referenceDate, setReferenceDate] = useState<Date>(
+    () => startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
 
-  const { categories } = useCategories();
-  const { tasks } = useTasks();
+  // 2: Fetch categories for mapping names
+  const { categories, isLoading: catsLoading, error: catsError } = useCategories();
 
-  const categoryMap = buildCategoryMap(categories);
+  // 3: Build id→name map
+  const categoryMap = useMemo(() => {
+    const map: { [key: string]: string } = {};
+    categories.forEach((c: Category) => { map[c.id] = c.name; });
+    return map;
+  }, [categories]);
 
-  const timeEntries: TimeEntry[] = tasks.map(entry => ({
-    ...entry,
-    categoryName: categoryMap[entry.categoryId] ?? 'Okänd kategori',
-  }));
+  // 4: Calculate times per category
+  const categoryTimes = useMemo(
+    () => calculateWeeklyTimeByCategory(timeEntries, referenceDate),
+    [timeEntries, referenceDate]
+  );
 
-  const goToPreviousWeek = () => {
-    const newDate = new Date(referenceDate);
-    newDate.setDate(newDate.getDate() - 7);
-    setReferenceDate(newDate);
-  };
+  // 5: Week navigation callbacks
+  const goToPreviousWeek = useCallback(() => {
+    setReferenceDate(d => { const nd = new Date(d); nd.setDate(nd.getDate() - 7); return nd; });
+  }, []);
+  const goToNextWeek = useCallback(() => {
+    setReferenceDate(d => { const nd = new Date(d); nd.setDate(nd.getDate() + 7); return nd; });
+  }, []);
+  const isNextDisabled = referenceDate >= startOfWeek(new Date(), { weekStartsOn: 1 });
 
-  const goToNextWeek = () => {
-    const newDate = new Date(referenceDate);
-    newDate.setDate(newDate.getDate() + 7);
-    setReferenceDate(newDate);
-  };
+  // Loading & error
+  if (catsLoading) return <p>Laddar kategorier…</p>;
+  if (catsError)   return <p>Fel vid hämtning av kategorier: {catsError.message}</p>;
 
   return (
     <div className={styles.statHolder}>
       <h2 className={styles.title}>Statistik</h2>
 
       <WeekHeader date={referenceDate} />
-
       <div className={styles.weekNav}>
         <button onClick={goToPreviousWeek}>⬅ Föregående vecka</button>
-        <button onClick={goToNextWeek}>Nästa vecka ➡</button>
+        <button onClick={goToNextWeek} disabled={isNextDisabled}>Nästa vecka ➡</button>
       </div>
 
       <StatBar

@@ -1,12 +1,7 @@
 
-//import { HARDCODED_CATEGORIES } from '@utils/categoryData'; //byt till sevice fetch för skippa hårdkodade klasser testa sedan lägga till ytterligare kategori
 import { useState, useEffect } from 'react';
 import { getTaskCategories } from '@services/taskCategoryService';
-
-export interface Category {
-  id: string;
-  name: string;
-}
+import { Category } from '@models/Category';
 
 export function useCategories(): {
   categories: Category[];

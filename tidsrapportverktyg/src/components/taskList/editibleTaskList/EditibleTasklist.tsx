@@ -1,48 +1,47 @@
 import React from 'react';
 import EditebleTaskCard from '@components/taskCard/editebleTaskCard/EditebleTaskCard';
-import { useTasks } from '@hooks/useTasks';
-import { Category } from '@hooks/useCategories';
 import { TimeEntry } from '@models/TimeEntry';
+import { Category } from '@models/Category';
 import styles from './EditibleTaskList.module.css';
 
+// Props för att ta emot data och metoder från parent-komponent
+interface EditibleTaskListProps {
+  tasks: TimeEntry[];
+  categories: Category[];
+  isLoading: boolean;
+  error: Error | null;
+  updateTask: (id: string, updatedFields: Partial<TimeEntry>) => Promise<void>;
+}
+
 /**
- * TimeEntry-typen som comes från service-hook:
- *
- * export type TimeEntry = {
- *   id: string;
- *   categoryId: string;
- *   categoryName?: string;  // Enriched from backend via getTasks
- *   startTime: Date | null;
- *   endTime: Date | null;
- *   duration: number;
- * };
+ * Listar ut redigerbara TaskCards utifrån prop-data.
  */
-// EditibleTaskList ansvarar för att hämta och rendera en lista med redigerbara tidsuppgifter.
-const EditibleTaskList: React.FC = () => {
-  // useTasks hook returnerar:
-  // tasks: TimeEntry[]
-  // categories: Category[]
-  // isLoading: boolean
-  // error: Error | null
-  // updateTask: (id: string, updatedFields: Partial<TimeEntry>) => Promise<void>
-  const { tasks, categories, isLoading, error, updateTask } = useTasks();
+const EditibleTaskList: React.FC<EditibleTaskListProps> = ({
+  tasks,
+  categories,
+  isLoading,
+  error,
+  updateTask,
+}) => {
+  if (isLoading) {
+    return <div>Laddar uppgifter...</div>;
+  }
+  if (error) {
+    return <div className="text-red-600">Fel: {error.message}</div>;
+  }
 
-  // Visa laddningsindikator medan data hämtas
-  if (isLoading) return <div>Laddar uppgifter...</div>;
-  // Visa felmeddelande om något gick fel
-  if (error) return <div className="text-red-600">Fel: {error.message}</div>;
+  if (tasks.length === 0) {
+    return <p>Inga uppgifter än.</p>;
+  }
 
-  // Mappa varje TimeEntry till en redigerbar kortkomponent
   return (
     <div className={styles.taskList}>
-      {tasks.map((task: TimeEntry) => (
+      {tasks.map((task) => (
         <EditebleTaskCard
-          key={task.id}               // Unik nyckel per entry
-          task={task}                 // Inkoppling av hela TimeEntry-objektet
-          categories={categories}     // Kategori-lista med id/name
-          onSave={(id, updated) =>   // När användaren klickar Spara
-            updateTask(id, updated)  // Anropa hookens updateTask för persistens
-          }
+          key={task.id}
+          task={task}
+          categories={categories}
+          onSave={(id, updated) => updateTask(id, updated)}
         />
       ))}
     </div>
