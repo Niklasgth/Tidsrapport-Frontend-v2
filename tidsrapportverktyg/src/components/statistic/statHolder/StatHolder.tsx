@@ -11,7 +11,7 @@ import { TimeEntry } from '@models/TimeEntry';
 
 // Data-hooks & util
 import { useCategories } from '@hooks/useCategories';
-import { useTasks } from '@hooks/useTask';
+import { useTasks } from '@hooks/useTasks';
 import { buildCategoryMap } from '@utils/categoryUtils';
 
 const StatHolder: React.FC = () => {
