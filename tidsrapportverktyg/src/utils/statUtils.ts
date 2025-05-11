@@ -1,19 +1,17 @@
-// src/utils/statUtils.ts
 import { TimeEntry } from '@models/TimeEntry';
+import { startOfWeek, endOfWeek } from 'date-fns';
 
 /**
- * Hjälpfunktion: kollar om ett datum tillhör samma vecka som referensdatum (söndag–lördag).
+ * Hjälpfunktion: kollar om ett datum tillhör samma vecka som referensdatum (måndag–söndag).
  */
 function isInSameWeek(date: Date, reference: Date): boolean {
-  const startOfWeek = new Date(reference);
-  startOfWeek.setDate(reference.getDate() - startOfWeek.getDay());
+  const weekStart = startOfWeek(reference, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(reference, { weekStartsOn: 1 });
 
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
-
-  return date >= startOfWeek && date < endOfWeek;
+  return date >= weekStart && date <= weekEnd;
 }
 
+// Veckodagsnamn (används i daglig statistik)
 const dayLabels = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
 
 /**
