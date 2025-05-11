@@ -19,11 +19,11 @@ const CategoryHandler: React.FC<CategoryHandlerProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const fetchCategories = async () => {
-    console.log('→ fetchCategories körs');        // ①
+    console.log('→ fetchCategories körs');       
     setIsLoading(true);
     try {
       const cats = await getTaskCategories();
-      console.log('← getTaskCategories färdig, cats=', cats);  // ②
+      console.log('← getTaskCategories färdig, cats=', cats);  
       setCategories(cats);
       setError(null); 
     } catch (err: any) {
@@ -60,7 +60,6 @@ const CategoryHandler: React.FC<CategoryHandlerProps> = ({
 
     return (
       <div className={styles.root}>
-        {/* Flyttat upp: Välj kategori */}
         <div className={styles.field}>
           <label htmlFor="select-category" className={styles.label}>
             Välj det du vill ta tid på:
@@ -88,7 +87,7 @@ const CategoryHandler: React.FC<CategoryHandlerProps> = ({
         <div className={styles.field}>
           <label htmlFor="new-category" className={styles.label}>
             Saknas det du ska göra i listan?  
-            Skapa din egen syssla:
+            Skapa din egen syssla så kan duse den i valmenyn ovan:
           </label>
           <div className={styles.fieldGroup}>
             <input

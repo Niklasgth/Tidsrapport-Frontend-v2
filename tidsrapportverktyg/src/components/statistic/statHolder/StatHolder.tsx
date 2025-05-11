@@ -1,54 +1,67 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { startOfWeek } from 'date-fns';
 
-// Components
-import StatBar      from '@components/statistic/stats/StatBar';
-import WeeklyStats  from '@components/statistic/weeklyStats/WeeklyStats';
-import WeekHeader   from '@components/statistic/weekHeader/WeekHeader';
+// Statistikkomponenter
+import StatBar      from '@components/statistic/stats/StatBar';          // Visar stapeldiagram per kategori
+import WeeklyStats  from '@components/statistic/weeklyStats/WeeklyStats';// Visar summerad tid i text
+import WeekHeader   from '@components/statistic/weekHeader/WeekHeader';  // Visar aktuell veckas rubrik
 import styles       from './StatHolder.module.css';
 
-// Models & hooks & utils
-import { TimeEntry }        from '@models/TimeEntry';
-import { Category }         from '@models/Category';
-import { useCategories }    from '@hooks/useCategories';
-import { calculateWeeklyTimeByCategory } from '@utils/statUtils';
+// Typer & verktyg
+import { TimeEntry }        from '@models/TimeEntry';      // Typ för en tidsregistrering
+import { Category }         from '@models/Category';       // Typ för kategori
+import { useCategories }    from '@hooks/useCategories';   // Hook som hämtar kategorilistan
+import { calculateWeeklyTimeByCategory } from '@utils/statUtils'; // Funktion för att summera tid per kategori
 
+// Props för komponenten – en lista av tidsregistreringar
 interface StatHolderProps {
   timeEntries: TimeEntry[];
 }
 
+// StatHolder: innehåller all statistiklogik och renderar statistiksidan
 const StatHolder: React.FC<StatHolderProps> = ({ timeEntries }) => {
-  // 1: Reference week
+  // 1: Bestäm referensvecka (måndag aktuell vecka)
   const [referenceDate, setReferenceDate] = useState<Date>(
     () => startOfWeek(new Date(), { weekStartsOn: 1 })
   );
 
-  // 2: Fetch categories for mapping names
+  // 2: Hämta kategorier för att kunna mappa id → namn
   const { categories, isLoading: catsLoading, error: catsError } = useCategories();
 
-  // 3: Build id→name map
+  // 3: Bygg upp en map där varje kategori-id kopplas till sitt namn
   const categoryMap = useMemo(() => {
     const map: { [key: string]: string } = {};
     categories.forEach((c: Category) => { map[c.id] = c.name; });
     return map;
   }, [categories]);
 
-  // 4: Calculate times per category
+  // 4: Beräkna hur mycket tid som spenderats per kategori denna vecka
   const categoryTimes = useMemo(
     () => calculateWeeklyTimeByCategory(timeEntries, referenceDate),
     [timeEntries, referenceDate]
   );
 
-  // 5: Week navigation callbacks
+  // 5: Navigering mellan veckor (7 dagar framåt/bakåt)
   const goToPreviousWeek = useCallback(() => {
-    setReferenceDate(d => { const nd = new Date(d); nd.setDate(nd.getDate() - 7); return nd; });
+    setReferenceDate(d => {
+      const nd = new Date(d);
+      nd.setDate(nd.getDate() - 7);
+      return nd;
+    });
   }, []);
+
   const goToNextWeek = useCallback(() => {
-    setReferenceDate(d => { const nd = new Date(d); nd.setDate(nd.getDate() + 7); return nd; });
+    setReferenceDate(d => {
+      const nd = new Date(d);
+      nd.setDate(nd.getDate() + 7);
+      return nd;
+    });
   }, []);
+
+  // Inaktivera "Nästa vecka"-knapp om man redan är på innevarande vecka
   const isNextDisabled = referenceDate >= startOfWeek(new Date(), { weekStartsOn: 1 });
 
-  // Loading & error
+  // Visa laddnings- eller felmeddelande vid behov
   if (catsLoading) return <p>Laddar kategorier…</p>;
   if (catsError)   return <p>Fel vid hämtning av kategorier: {catsError.message}</p>;
 
@@ -56,18 +69,23 @@ const StatHolder: React.FC<StatHolderProps> = ({ timeEntries }) => {
     <div className={styles.statHolder}>
       <h2 className={styles.title}>Statistik</h2>
 
+      {/* Visar aktuell veckorubrik */}
       <WeekHeader date={referenceDate} />
+
+      {/* Veckonavigering */}
       <div className={styles.weekNav}>
         <button onClick={goToPreviousWeek}>⬅ Föregående vecka</button>
         <button onClick={goToNextWeek} disabled={isNextDisabled}>Nästa vecka ➡</button>
       </div>
 
+      {/* Stapel med tid per kategori (graf) */}
       <StatBar
         timeEntries={timeEntries}
         categories={categoryMap}
         referenceDate={referenceDate}
       />
 
+      {/* Textbaserad summering per dag och kategori */}
       <WeeklyStats
         entries={timeEntries}
         referenceDate={referenceDate}

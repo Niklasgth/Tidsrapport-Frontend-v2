@@ -1,4 +1,4 @@
-/* CategoryHandler.module.css */
+
 
 .root {
   padding: 2rem;
@@ -47,7 +47,7 @@
 .select {
   /* gör dropdown-storleken mer lik input-fältet */
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20…%3E"); /* ev. egen pil */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20…%3E"); 
   background-repeat: no-repeat;
   background-position: right 1rem center;
 }
