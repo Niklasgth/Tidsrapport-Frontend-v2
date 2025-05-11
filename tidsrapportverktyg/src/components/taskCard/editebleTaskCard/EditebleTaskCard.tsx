@@ -52,7 +52,7 @@ const EditebleTaskCard: React.FC<EditebleTaskCardProps> = ({
     return;
   }
 
-
+ console.log("Sparar task med id:", task.id); 
 onSave(task.id, {
   categoryId: draft.categoryId,
   startTime: draft.startTime ? localDatetimeToISOString(draft.startTime) : undefined,
