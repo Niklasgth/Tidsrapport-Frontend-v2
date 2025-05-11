@@ -22,7 +22,7 @@ export default defineConfig({
       '@routes':     path.resolve(__dirname, 'src/routes')
     },
   },
-  base: '/', // <- Viktig för deployment
+  base: './', // <- Viktig för deployment
   build: {
     outDir: 'dist',
   },
