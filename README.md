@@ -17,6 +17,9 @@ Applikationen är byggd med **React**, **TypeScript**, och använder en REST-bac
 - sortering av kort på aktuell dag
 - avsaknad av login funktion och stöd för olika användare
 
+## kända buggar
+- tider som timas på söndagen fugnerar inte. Tydligen kör appen kristet katolskt protokoll i den nya påvens ära att helga vilodagen. Nej ärligt: tiden tog slut innan jag han felsöka mer än att det var hur min app läser veckodatan i lista. 
+
 ## Teknikstack
 
 - React (Vite)
