@@ -2,8 +2,11 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import styles from './EditebleTaskCard.module.css';
 import buttonStyles from '@components/ui/button/Button.module.css';
+
 import { TimeEntry } from '@models/TimeEntry';
 import { Category } from '@models/Category';
+
+import { localDatetimeToISOString, formatReadableDatetime  } from '@utils/dateHelpers';
   
 interface EditebleTaskCardProps {
   task: TimeEntry;
@@ -42,12 +45,19 @@ const EditebleTaskCard: React.FC<EditebleTaskCardProps> = ({
     setDraft(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    onSave(task.id, {
-      categoryId: draft.categoryId,
-      startTime: draft.startTime || undefined,
-      endTime:   draft.endTime   || undefined,
-    });
+  const handleSave = () => {  
+    //för felsökning
+    if (!task.id) {
+    console.error('Kan inte spara – task.id saknas!');
+    return;
+  }
+
+
+onSave(task.id, {
+  categoryId: draft.categoryId,
+  startTime: draft.startTime ? localDatetimeToISOString(draft.startTime) : undefined,
+  endTime: draft.endTime ? localDatetimeToISOString(draft.endTime) : undefined,
+});
     setIsEditing(false);
   };
 

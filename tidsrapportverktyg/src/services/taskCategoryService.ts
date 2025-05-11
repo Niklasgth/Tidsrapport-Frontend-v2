@@ -1,4 +1,4 @@
-import { TaskCategory as Raw } from '@models/TaskCategory';
+import { Category as Raw } from '@models/Category';
 import { Category } from '@models/Category';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -23,7 +23,7 @@ export const getTaskCategories = async (): Promise<Category[]> => {
   return cats;
 };
 
-export const createTaskCategory = async (name: string): Promise<Category> => {
+export const createCategory = async (name: string): Promise<Category> => {
   const c = await fetch(TASK_CATEGORIES_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

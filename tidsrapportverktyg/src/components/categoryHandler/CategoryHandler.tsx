@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { getTaskCategories, createTaskCategory } from '@services/taskCategoryService';
+import { getTaskCategories, createCategory } from '@services/taskCategoryService';
 import { Category } from '@models/Category'; 
 import styles from './CategoryHandler.module.css';
 
@@ -37,19 +37,26 @@ const CategoryHandler: React.FC<CategoryHandlerProps> = ({
     fetchCategories();
   }, []);
 
-  const handleCreate = async () => {
-    if (!newCategoryName.trim()) return;
-    setIsLoading(true);
-    try {
-      await createTaskCategory(newCategoryName.trim());
-      setNewCategoryName('');
-      await fetchCategories();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+ const handleCreate = async () => {
+  const trimmedName = newCategoryName.trim();
+  if (!trimmedName) return;
+
+  if (categories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase())) {
+    setError('Sysslan finns redan.');
+    return;
+  }
+
+  setIsLoading(true);
+  try {
+    await createCategory(trimmedName);
+    setNewCategoryName('');
+    await fetchCategories();
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
     return (
       <div className={styles.root}>

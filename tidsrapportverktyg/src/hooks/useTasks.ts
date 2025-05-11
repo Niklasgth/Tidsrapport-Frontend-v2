@@ -40,7 +40,16 @@ export function useTasks(): UseTasksResult {
     setIsLoading(true);
     setError(null);
     try {
-      const fetched = await fetchTasks(); // varje t kan redan ha t.categoryName
+      //felsöknig
+      const fetched = await fetchTasks();
+console.log('Fetched tasks:', fetched.map(t => ({
+  id: t.id,
+  _id: (t as any)._id,
+  categoryId: t.categoryId,
+  startTime: t.startTime,
+}))); //felsökning slut
+
+
       const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
       const enriched = fetched.map(t => ({
         ...t,

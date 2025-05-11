@@ -5,7 +5,7 @@ const API_URL       = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const TASKS_URL     = `${API_URL}/api/tasks`;
 
 interface RawTimeEntry {
-  _id: string;
+  id: string; 
   categoryId: string;
   categoryName: string;
   startTime: string;
@@ -19,12 +19,12 @@ async function handleResponse<T>(res: Response): Promise<T> {
 }
 
 const mapToTimeEntry = (r: RawTimeEntry): TimeEntry => ({
-  id:           r._id,
-  categoryId:   r.categoryId,
+  id: r.id,
+  categoryId: r.categoryId,
   categoryName: r.categoryName,
-  startTime:    r.startTime,
-  endTime:      r.endTime,
-  duration:     r.duration,
+  startTime: r.startTime,
+  endTime: r.endTime,
+  duration: r.duration,
 });
 
 // Läs alla
