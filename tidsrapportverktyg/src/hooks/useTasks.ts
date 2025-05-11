@@ -1,15 +1,19 @@
-// src/hooks/useTasks.ts
 import { useState, useEffect, useCallback } from 'react';
+
+// API-funktioner för att kommunicera med backend
 import {
   getTasks as fetchTasks,
   createTask as apiCreateTask,
   updateTask as apiUpdateTask,
   deleteTask as apiDeleteTask,
 } from '@services/taskService';
+
+// Typer för uppgift och kategori
 import { TimeEntry } from '@models/TimeEntry';
 import { useCategories } from './useCategories';
 import { Category } from '@models/Category';
 
+// Typdefinition för vad hooken returnerar
 export interface UseTasksResult {
   tasks: TimeEntry[];
   categories: Category[];
@@ -25,42 +29,41 @@ export interface UseTasksResult {
   refresh: () => Promise<void>;
 }
 
+// Hook som hanterar state och logik kring uppgifter och kategorier
 export function useTasks(): UseTasksResult {
+  // Använder useCategories för att hämta kategorier
   const {
     categories,
     isLoading: catLoading,
     error: catError,
   } = useCategories();
+
+  // Lokal state för uppgifter, laddstatus och fel
   const [tasks, setTasks] = useState<TimeEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Helper för att läsa in + enrich:a med categoryName
+  // Funktion för att hämta uppgifter från backend och enrich:a med kategori-namn
   const load = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+
     try {
-      //felsöknig
+      // 1. Hämta uppgifter
       const fetched = await fetchTasks();
-console.log('Fetched tasks:', fetched.map(t => ({
-  id: t.id,
-  _id: (t as any)._id,
-  categoryId: t.categoryId,
-  startTime: t.startTime,
-}))); //felsökning slut
 
-
+      // 2. Skapa en map mellan categoryId → categoryName för enklare lookup
       const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
+
+      // 3. Enrich:a varje uppgift med kategori-namn
       const enriched = fetched.map(t => ({
         ...t,
-        // 1) använd backendens categoryName om det finns
-        // 2) annars slå upp i catMap
-        // 3) som sista fallback, "Okänd kategori"
         categoryName:
-          t.categoryName ??
-          catMap[t.categoryId] ??
-          'Okänd kategori',
+          t.categoryName ??     // Använd om det redan finns
+          catMap[t.categoryId] ?? // Annars slå upp i map
+          'Okänd kategori',     // Fallback
       }));
+
       setTasks(enriched);
     } catch (err: any) {
       setError(err);
@@ -69,7 +72,7 @@ console.log('Fetched tasks:', fetched.map(t => ({
     }
   }, [categories]);
 
-  // Kör load när kategorierna är inlästa
+  // När kategorierna är färdighämtade – hämta även uppgifter
   useEffect(() => {
     if (!catLoading && !catError) {
       load();
@@ -79,7 +82,7 @@ console.log('Fetched tasks:', fetched.map(t => ({
     }
   }, [catLoading, catError, load]);
 
-  // Skapa + patcha state
+  // Skapa ny uppgift och lägg till den lokalt
   const createAndAddTask = async (
     categoryId: string,
     startTime: Date,
@@ -91,28 +94,27 @@ console.log('Fetched tasks:', fetched.map(t => ({
         startTime.toISOString(),
         endTime.toISOString()
       );
-      // created har redan categoryName från service
+      // Lägg till direkt i state – ingen reload krävs här
       setTasks(prev => [...prev, created]);
     } catch (err: any) {
       setError(err);
     }
   };
 
-  // Uppdatera + patcha state
+  // Uppdatera befintlig uppgift via API och ladda om listan
   const updateTask = async (
-  id: string,
-  updatedFields: Partial<TimeEntry>
-) => {
-  try {
-    await apiUpdateTask(id, updatedFields);
-    await load(); // Hämtar all data igen inklusive korrekt categoryName
-  } catch (err: any) {
-    setError(err);
-  }
-};
+    id: string,
+    updatedFields: Partial<TimeEntry>
+  ) => {
+    try {
+      await apiUpdateTask(id, updatedFields);
+      await load(); // Säkerställ korrekt data efter uppdatering
+    } catch (err: any) {
+      setError(err);
+    }
+  };
 
-
-  // Ta bort både backend + state
+  // Radera uppgift både från backend och lokalt state. Ej använd
   const removeTask = async (id: string) => {
     try {
       await apiDeleteTask(id);
@@ -122,6 +124,7 @@ console.log('Fetched tasks:', fetched.map(t => ({
     }
   };
 
+  // Returnera alla funktioner och värden som används i UI:t
   return {
     tasks,
     categories,
@@ -130,6 +133,6 @@ console.log('Fetched tasks:', fetched.map(t => ({
     createAndAddTask,
     updateTask,
     removeTask,
-    refresh: load,
+    refresh: load, // Möjlighet att trigga omhämtning manuellt
   };
 }

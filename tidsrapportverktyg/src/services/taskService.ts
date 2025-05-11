@@ -1,11 +1,12 @@
-// src/services/taskService.ts
 import { TimeEntry } from '@models/TimeEntry';
 
-const API_URL       = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-const TASKS_URL     = `${API_URL}/api/tasks`;
+// Base URL för backend, antingen från miljövariabel eller localhost
+const API_URL   = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const TASKS_URL = `${API_URL}/api/tasks`;
 
+// Typ för rådata från backend
 interface RawTimeEntry {
-  id: string; 
+  id: string;
   categoryId: string;
   categoryName: string;
   startTime: string;
@@ -13,11 +14,13 @@ interface RawTimeEntry {
   duration: number;
 }
 
+// Hjälpfunktion som hanterar svar från fetch-anrop
 async function handleResponse<T>(res: Response): Promise<T> {
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  if (!res.ok) throw new Error(await res.text()); // Vid fel – kasta felmeddelandet
+  return res.json(); // Returnera JSON-objektet som rätt typ
 }
 
+// Mapper: konverterar från raw backend-format till frontend TimeEntry
 const mapToTimeEntry = (r: RawTimeEntry): TimeEntry => ({
   id: r.id,
   categoryId: r.categoryId,
@@ -27,39 +30,48 @@ const mapToTimeEntry = (r: RawTimeEntry): TimeEntry => ({
   duration: r.duration,
 });
 
-// Läs alla
+
+// =============================
+// === API-funktioner nedan ===
+// =============================
+
+// === GET /api/tasks ===
+// Hämta alla uppgifter
 export const getTasks = async (): Promise<TimeEntry[]> => {
-  const raw = (await fetch(TASKS_URL).then(handleResponse<RawTimeEntry[]>));
-  return raw.map(mapToTimeEntry);
+  const raw = await fetch(TASKS_URL).then(handleResponse<RawTimeEntry[]>);
+  return raw.map(mapToTimeEntry); // Konvertera varje post
 };
 
-// Skapa ny
+// === POST /api/tasks ===
+// Skapa ny uppgift
 export const createTask = async (
   categoryId: string,
-  startTime:  string,
-  endTime:    string
+  startTime: string,
+  endTime: string
 ): Promise<TimeEntry> => {
   const r = await fetch(TASKS_URL, {
-    method:  'POST',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ categoryId, startTime, endTime }),
+    body: JSON.stringify({ categoryId, startTime, endTime }),
   }).then(handleResponse<RawTimeEntry>);
-  return mapToTimeEntry(r);
+  return mapToTimeEntry(r); // Konvertera resultatet
 };
 
-// Uppdatera befintlig
+// === PUT /api/tasks/:id ===
+// Uppdatera en uppgift (t.ex. ändra start-/stoptid eller kategori)
 export const updateTask = async (
-  id:            string,
+  id: string,
   updatedFields: Partial<Pick<TimeEntry, 'categoryId' | 'startTime' | 'endTime'>>
 ): Promise<void> => {
   await fetch(`${TASKS_URL}/${id}`, {
-    method:  'PUT',
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(updatedFields),
+    body: JSON.stringify(updatedFields),
   }).then(handleResponse<void>);
 };
 
-// Radera
+// === DELETE /api/tasks/:id ===
+// Ta bort en uppgift
 export const deleteTask = async (id: string): Promise<void> => {
   await fetch(`${TASKS_URL}/${id}`, {
     method: 'DELETE',

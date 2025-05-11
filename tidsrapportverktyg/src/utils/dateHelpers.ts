@@ -1,7 +1,7 @@
 
 /**
- * Konvertera "2025-05-10T10:36" (från datetime-local) till full ISO med tidzon
- * → "2025-05-10T08:36:00.000Z" (UTC)
+ * Konverterar exempelvis: "2025-05-10T10:36" (från datetime-local) till full ISO med tidzon
+ *  "2025-05-10T08:36:00.000Z" (UTC)
  */
 export const localDatetimeToISOString = (local: string): string => {
   return new Date(local).toISOString();
