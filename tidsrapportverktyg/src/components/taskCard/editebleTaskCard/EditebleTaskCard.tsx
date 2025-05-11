@@ -131,8 +131,8 @@ onSave(task.id, {
       ) : (
         <div className={styles.viewMode}>
           <h3 className={styles.categoryName}>{task.categoryName}</h3>
-          <p><strong>Start:</strong> {formatTime(task.startTime)}</p>
-          <p><strong>Slut:</strong>  {formatTime(task.endTime)}</p>
+          <p><strong>Start:</strong> {task.startTime ? formatReadableDatetime(task.startTime) : '–'}</p>
+          <p><strong>Slut:</strong>  {task.endTime ? formatReadableDatetime(task.endTime) : '–'}</p>
           <p><strong>Datum:</strong> {formatDate(task.startTime)}</p>
           <div className={styles.buttons}>
             <button
