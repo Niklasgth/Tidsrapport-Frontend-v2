@@ -100,18 +100,17 @@ console.log('Fetched tasks:', fetched.map(t => ({
 
   // Uppdatera + patcha state
   const updateTask = async (
-    id: string,
-    updatedFields: Partial<TimeEntry>
-  ) => {
-    try {
-      await apiUpdateTask(id, updatedFields);
-      setTasks(prev =>
-        prev.map(t => (t.id === id ? { ...t, ...updatedFields } : t))
-      );
-    } catch (err: any) {
-      setError(err);
-    }
-  };
+  id: string,
+  updatedFields: Partial<TimeEntry>
+) => {
+  try {
+    await apiUpdateTask(id, updatedFields);
+    await load(); // Hämtar all data igen inklusive korrekt categoryName
+  } catch (err: any) {
+    setError(err);
+  }
+};
+
 
   // Ta bort både backend + state
   const removeTask = async (id: string) => {

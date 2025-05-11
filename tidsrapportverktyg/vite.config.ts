@@ -1,4 +1,3 @@
-// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -21,12 +20,15 @@ export default defineConfig({
       '@models':     path.resolve(__dirname, 'src/models'),
       '@styles':     path.resolve(__dirname, 'src/styles'),
       '@routes':     path.resolve(__dirname, 'src/routes')
-      
     },
+  },
+  base: './', // <- Viktig för deployment
+  build: {
+    outDir: 'dist',
   },
   server: {
     fs: {
       allow: ['.'],
     },
-  },
+  }, // <-- Denna saknades i din tidigare version
 });
