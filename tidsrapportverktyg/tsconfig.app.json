@@ -22,7 +22,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* 👇 Alias-stöd */
+    /*  Alias-stöd */
     "baseUrl": "./src",
     "paths": {
       "@utils/*": ["utils/*"],

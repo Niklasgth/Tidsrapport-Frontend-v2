@@ -1,99 +1,100 @@
 # Tidsrapport-Frontend
+Under mina studier byggdes denna app som del av inlämningsuppgifterna
+Detta är frontend-delen av **Timekeeper** – en tidrapporteringsapp som låter användare registrera och visualisera hur mycket tid de lägger på olika arbetsuppgifter.  
+Applikationen är byggd med **React**, **TypeScript**, och kommunicerar med ett REST-API för datahantering. 
 
-Detta är frontend-delen av min **Timekeeper**, en tidrapporteringsapp vilken låter en användaren registrera och se sin lagda tid på olika arbetsuppgifter elelr andra sysslor. 
-Applikationen är byggd med **React**, **TypeScript**, och använder en REST-backend för datahantering.
+---
 
-## Funktionalitet
+## 🚀 Funktionalitet
 
-- ✅ Skapa och välj arbetskategori (t.ex. *Läsa*, *Programmera*, *Lunch*, *Paus*)
-- ▶️ Starta och stoppa en arbetsuppgift (Check in / Check out)
-- 🧾 Lista alla registrerade uppgifter
-- 📊 Visa statistik per vecka, dag och kategori (text + graf)
+- ✅ Skapa och välj arbetskategori (ex: *Läsa*, *Programmera*, *Lunch*, *Paus*)
+- ▶️ Starta och stoppa uppgifter (Check in / Check out)
+- 🧾 Visa historik över registrerade tidsposter
+- 📊 Statistik per vecka, dag och kategori (text + graf)
 - 🎨 Stilren och responsiv UI med modulär komponentstruktur
-- 🚀 Automatisk deployment via GitHub → DigitalOcean
 
-## Saknad funktionalitet
+---
 
-- sortering av kort på aktuell dag
-- avsaknad av login funktion och stöd för olika användare
+## 🚧 Begränsningar & Buggar
 
-## kända buggar
-- Tider som timas på söndagen fungerar inte. Tydligen kör appen kristet katolskt protokoll i den nya påvens ära att helga vilodagen. Nej ärligt: tiden tog slut innan jag hann felsöka mer än att det var hur min app läser veckodatan i lista. 
+### Saknad funktionalitet
+- Inloggningssystem och stöd för flera användare
+- Sortering av uppgifter per dag i lista
 
-## Teknikstack
+### Kända buggar
+- Tidsposter som loggas på söndagar visas inte korrekt  
+  (p.g.a. en bugg i hur veckonummer beräknas – inte relaterad till religiösa protokoll 😉)
+
+---
+
+## 🧰 Teknikstack
 
 - React (Vite)
 - TypeScript
 - CSS Modules
-- Hooks (Custom och React built-in)
+- React Hooks (både inbyggda och custom)
 - REST API-integration
-- GitHub Actions + DigitalOcean App Platform
+- GitHub Actions + DigitalOcean App Platform (för deployment)
 
-## Projektstruktur
+---
 
-```plaintext
+## 🗂 Projektstruktur
+
 src/
 ├── components/         # Återanvändbara UI-komponenter
-├── hooks/              # Custom hooks som useTasks, useCategories etc.
-├── models/             # Typsystem för TimeEntry, Category m.fl.
-├── pages/              # Huvudsidor (inloggad vy etc.)
+├── hooks/              # Custom hooks (t.ex. useTasks, useCategories)
+├── models/             # Typer (t.ex. TimeEntry, Category)
+├── pages/              # Sidkomponenter (t.ex. inloggad vy)
 ├── services/           # API-anrop till backend
 ├── utils/              # Hjälpfunktioner (ex. tidsberäkning)
-├── styles/             # Globala och modulära CSS-filer
-```
+├── styles/             # CSS-filer (globala & modulära)
 
-## Viktiga komponenter
+---
+##🧩 Viktiga komponenter & hooks
+---
 
-- `TimeTracker` – Huvudkomponent för att starta/stoppa en uppgift
-- `TaskList` – Visar registrerade uppgifter i en lista
-- `StatBar` – Grafisk visning av tid per kategori
-- `WeeklyStats` – Summering per dag och kategori i textform
-- `CategoryHandler` – Hantering av kategorier
-- `useTasks()` – Hook som hanterar `TimeEntry`-logik
-- `useCategories()` – Hook som hanterar arbetskategorier
+TimeTracker – Start/stopp-funktionalitet
 
-## Miljövariabler
+TaskList – Visar registrerade uppgifter
 
-| Variabel         | Exempelvärde                    | Beskrivning                |
-|------------------|----------------------------------|----------------------------|
-| `VITE_API_URL`   | `http://localhost:8080`         | Adressen till backend-API  |
+StatBar – Grafisk statistik (kategori/tid)
 
-## Starta lokalt
+WeeklyStats – Textbaserad summering per vecka
 
-1. Klona repot:
-```bash
-git clone https://github.com/Niklasgth/Tidsrapport-Frontend-v2.git
-cd Tidsrapport-Frontend-v2
-```
+CategoryHandler – Skapa och hantera kategorier
 
-2. Installera beroenden:
-```bash
+useTasks() – Hook för logik kring tidsposter
+
+useCategories() – Hook för kategori-hantering
+
+---
+##🌍 Miljövariabler
+---
+
+| Variabel       | Exempelvärde            | Beskrivning          |
+| -------------- | ----------------------- | -------------------- |
+| `VITE_API_URL` | `http://localhost:8080` | URL till backend-API |
+
+
+Skapa en .env-fil (eller använd .env.example) för att konfigurera rätt URL.
+
+🧪 Starta lokalt
+Klona repot:
+
+cd Tidsrapport-Frontend-v2/tidsrapportverktyg
+Installera beroenden:
+
+
 npm install
-```
+Starta utvecklingsserver:
 
-3. Starta dev-server:
-```bash
+
 npm run dev
-```
+Obs: Backend behöver köras parallellt på samma host som definierats i VITE_API_URL.
 
-> Backend måste vara igång på samma nätverk/host som definierat i `VITE_API_URL`.
 
-## Deployment
+📦 Bygg & deployment
+Frontend kan byggas med:
 
-Frontend är konfigurerad för att byggas med `vite` och deployas som en **statisk webbplats** via DigitalOcean App Platform.
-
-### Bygg för produktion
-
-```bash
 npm run build
-```
-
-### Output
-
-Filerna hamnar i `/dist` och kan användas som **static site** i DigitalOcean.
-
-## Övrigt
-
-## Kontakt
-
-Byggd av [Niklas Torstensson](https://github.com/Niklasgth)
+Färdiga statiska filer hamnar i /dist och är redo att deployas (t.ex. via DigitalOcean App Platform eller Netlify).
